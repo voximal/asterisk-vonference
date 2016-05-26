@@ -1,0 +1,134 @@
+
+Please note that app_vonference is still work in progress, so this document
+might be outdated. As always, the source code is the definitive reference
+(cli.[ch] and conference.[ch]).  You can also obtain help/usage information by
+using Asterisk CLI help system ("help vonference")
+
+A member in a conference can be referred to by its id or by its channel.  Id
+is a positive number assigned automatically when the member joins the
+conference.  Channel is Asterisk channel identifier. To obtain a list of
+member ids and channels in a conference, do:
+
+*CLI> vonference list <conference name>
+
+Current command line used by app_vonference:
+
+- vonference debug: enable debugging for a conference
+  usage: vonference debug <conference_name> [ on | off ]
+
+- vonference end: stops a conference
+  usage: vonference end <conference name> [nohangup]
+
+- vonference kick: kick member from a conference
+  usage: vonference kick <conference_name> <member id>
+
+- vonference kickchannel: kick channel from a conference
+  usage: vonference kickchannel <channel>
+
+- vonference list: list members of a conference. If no conference is specified, all conferences are listed
+  usage: vonference list {conference_name}
+
+- vonference lock: locks incoming video to a member
+  usage: vonference lock <conference name> <member id>
+
+- vonference lockchannel: locks incoming video to a channel
+  usage: vonference lockchannel <conference name> <channel>
+
+- vonference mute: mute member in a conference
+  usage: vonference mute <conference_name> <member id>
+
+- vonference muteconference: mute all members in a conference
+  usage: vonference muteconference <conference_name>
+
+- vonference mutechannel: mute channel in a conference
+  usage: vonference mutechannel <channel>
+
+- vonference talkvolume: raise or lower the talker's volume
+  usage: vonference talkvolume <channel> (up|down)
+
+- vonference listenvolume: raise or lower the listener's volume
+  usage: vonference listenervolume <channel> (up|down)
+
+- vonference volume: raise or lower the conference volume
+  usage: vonference volume <conference name> (up|down)
+
+- vonference play sound: play a sound to a conference member
+  usage: vonference play sound <channel> (<sound-file>)+ [mute]
+  If mute is specified, all other audio is muted while the sound is played back.
+
+- vonference play all (i6net): play a sound to all the conference members
+  usage: vonference play all <conference_name> (<sound-file>)+ [mute]
+  If mute is specified, all other audio is muted while the sound is played back.
+
+- vonference stop sound: stop playing sounds to a conference member
+  usage: vonference stop sound <channel>
+
+- vonference start moh: start music on hold for a conference member
+  usage: vonference start moh <channel>
+
+- vonference stop moh: stop music on hold for a conference member
+  usage: vonference start moh <channel>
+
+- vonference version: display vonference version
+  usage: vonference version
+  
+- vonference restart: kick all users in all conferences
+  usage: vonference restart
+  
+- vonference set default: sets default video source
+  usage: vonference set default <conference name> <member>
+  use a negative value for member if you want to clear the default
+
+- vonference set defaultchannel: sets default video source channel
+  usage: vonference set defaultchannel <conference name> <channel>
+
+- vonference show stats: show conference stats
+  usage: vonference show stats
+
+- vonference text: sends a text message to a member. Depends on the member's channel capabilities.
+  usage: vonference text <conference name> <member> <text>
+
+- vonference textbroadcast: sends a text message to all members in a conference
+  usage: vonference textbroadcast <conference name> <text>
+
+- vonference textchannel: sends a text message to a channel
+  usage: vonference textchannel <conference name> <channel> <text>
+
+- vonference unlock: unlocks incoming video
+  usage: vonference unlock <conference name>
+
+- vonference unmute: unmute member in a conference
+  usage: vonference unmute <conference_name> <member id>
+
+- vonference unmuteconference: unmute members in a conference
+  usage: vonference unmuteconference <conference_name>
+
+- vonference unmutechannel: unmute channel in a conference
+  usage: vonference unmutechannel <channel>
+
+- vonference video mute: mutes video from a member
+  usage: vonference video mute <conference name> <member>
+
+- vonference video mutechannel: mutes video from a channel
+  usage: vonference video mutechannel <conference name> <channel>
+
+- vonference video unmute: unmutes video from a member
+  usage: vonference video unmute <conference name> <member>
+
+- vonference video unmutechannel: unmutes video from a channel
+  usage: vonference video unmutechannel <conference name> <channel>
+
+- vonference viewchannel: switch video for a channel in a conference
+  usage: vonference viewchannel <conference_name> <dest channel> <src channel>
+
+- vonference viewstream: switch video for a member a conference
+  usage: vonference viewstream <conference_name> <member id> <stream no>
+
+- vonference drive: drive VAD video switching of destination member using audio from source member
+  usage: vonference drive <conference name> <source member> [destination member]
+  If destination member is missing or negative, break existing connection
+
+- vonference drivechannel: drive VAD video switching of destination channel using audio from source channel
+  usage: vonference drivechannel <conference name> <source channel> [destination channel]
+  If destination channel is missing, break existing connection
+ 
