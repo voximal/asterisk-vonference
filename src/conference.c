@@ -1,5 +1,5 @@
 
-// $Id: conference.c,v 1.1 2016/05/26 08:45:43 borja.sixto Exp $
+// $Id: conference.c,v 1.2 2016/05/31 14:30:35 borja.sixto Exp $
 
 /*
  * app_conference
@@ -888,7 +888,7 @@ static struct ast_conference* create_conf( char* name, struct ast_conf_member* m
 	// build translation paths
 	conf->from_slinear_paths[ AC_SLINEAR_INDEX ] = NULL ;
 
-#if ASTERISK_VERSION_NUM < AST_8
+#if ASTERISK_VERSION_NUM < AST_11
 
 #ifndef AC_USE_G722
 	conf->from_slinear_paths[ AC_ULAW_INDEX ] = ast_translator_build_path( AST_FORMAT_ULAW, AST_FORMAT_SLINEAR ) ;
