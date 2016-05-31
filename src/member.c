@@ -1,5 +1,5 @@
 
-// $Id: member.c,v 1.1 2016/05/26 08:45:43 borja.sixto Exp $
+// $Id: member.c,v 1.2 2016/05/30 12:34:48 borja.sixto Exp $
 
 /*
  * app_conference
@@ -61,6 +61,10 @@ static int process_incoming(struct ast_conf_member *member, struct ast_conferenc
 #ifdef ulex
  int dspsilence = 0;
 #endif
+
+
+   //DEBUG("Process Icomming  frame_type = %d\n", f->frametype);
+   //DEBUG("Process Icomming  frame_subclass(format) = %x\n", GET_FRAME_SUBCLASS_FORMAT(f));
 
 	// In Asterisk 1.4 AST_FRAME_DTMF is equivalent to AST_FRAME_DTMF_END
 	if (f->frametype == AST_FRAME_DTMF)
@@ -382,7 +386,7 @@ static int process_incoming(struct ast_conf_member *member, struct ast_conferenc
 		ast_frfree( f ) ;
 		f = NULL ;
 	}
-	else if ( GET_FRAME_CONTROL_TYPE(f) == AST_FRAME_VOICE )
+	else if ( f->frametype == AST_FRAME_VOICE )
 	{	//DEBUG("Got voice frame") ;
 		// accounting: count the incoming frame
 		member->frames_in++ ;
@@ -393,6 +397,10 @@ static int process_incoming(struct ast_conf_member *member, struct ast_conferenc
 		//
 		// make sure we have a valid dsp and frame type
 		//
+
+    //DEBUG("Process Icomming SLINEAR %x \n", AST_FORMAT_SLINEAR);
+    //DEBUG("Process Icomming SLINEAR16 %x \n", AST_FORMAT_SLINEAR16);
+
 		if (
 			member->dsp != NULL
 #ifndef	AC_USE_G722
@@ -405,6 +413,9 @@ static int process_incoming(struct ast_conf_member *member, struct ast_conferenc
 		{
 			// send the frame to the preprocessor
 			int spx_ret;
+
+      //DEBUG("Process Icomming execute speex_preprocess\n");
+
 			spx_ret = speex_preprocess( member->dsp, CASTDATA2PTR(f->data, void), NULL );
 
 			if ( spx_ret == 0 )
@@ -1116,7 +1127,11 @@ int member_exec( struct ast_channel* chan, const char* data )
 	int left = 0 ;
 	int res;
 
-	DEBUG("begin processing member thread, channel => %s\n", GET_CHAN_NAME(chan)) ;
+#ifndef	AC_USE_G722
+	DEBUG("begin processing member thread, channel => %s SLINEAR\n", GET_CHAN_NAME(chan)) ;
+#else
+	DEBUG("begin processing member thread, channel => %s SLINEAR16\n", GET_CHAN_NAME(chan)) ;
+#endif
 
 	//
 	// If the call has not yet been answered, answer the call
@@ -1125,12 +1140,16 @@ int member_exec( struct ast_channel* chan, const char* data )
 	// it will also return -1 if the channel is a zombie, or has hung up.
 	//
 
-	res = ast_answer( chan ) ;
-	if ( res )
-	{
-		ast_log( LOG_ERROR, "unable to answer call\n" ) ;
-		return -1 ;
-	}
+  if (ast_channel_state(chan) != AST_STATE_UP) {
+  	DEBUG("Answer the call => %s\n", GET_CHAN_NAME(chan)) ;
+
+	  res = ast_answer( chan ) ;
+	  if ( res )
+	  {
+		  ast_log( LOG_ERROR, "unable to answer call\n" ) ;
+		  return -1 ;
+	  }
+  }
 
 	//
 	// create a new member for the conference
@@ -1168,10 +1187,26 @@ int member_exec( struct ast_channel* chan, const char* data )
 	//
 	// setup asterisk read/write formats
 	//
+
 #if 0
 	DEBUG("CHANNEL INFO, CHANNEL => %s, DNID => %s, CALLER_ID => %s, ANI => %s\n", GET_CHAN_NAME(chan), chan->dnid, chan->callerid, chan->ani) ;
-	DEBUG("CHANNEL CODECS, CHANNEL => %s, NATIVE => %d, READ => %d, WRITE => %d\n", GET_CHAN_NAME(chan), chan->nativeformats, member->read_format, member->write_format) ;
 #endif
+	DEBUG("CHANNEL CODECS, CHANNEL => %s, NATIVE => %d, READ => %x, WRITE => %x\n", GET_CHAN_NAME(chan), 0, member->read_format, member->write_format) ;
+
+  //ast_format_set(ast_channel_rawreadformat(chan), AST_FORMAT_SLINEAR, 0);
+
+#ifndef	AC_USE_G722
+  member->read_format = AST_FORMAT_SLINEAR;
+  member->read_format = AST_FORMAT_SLINEAR;
+#else
+  member->read_format = AST_FORMAT_SLINEAR16;
+  member->read_format = AST_FORMAT_SLINEAR16;
+#endif
+
+  DEBUG("CHANNEL CODECS, RAWREAD => %s \n",ast_getformatname(ast_channel_rawreadformat(chan)));
+  DEBUG("CHANNEL CODECS, READFORMAT => %s \n",ast_getformatname(&member->read_format));
+  DEBUG("CHANNEL CODECS, WRITEFORMAT => %s \n",ast_getformatname(&member->read_format));
+
 	if ( ast_set_read_format_by_id( chan, member->read_format ) < 0 )
 	{
 		ast_log( LOG_ERROR, "unable to set read format to signed linear\n" ) ;
@@ -1179,7 +1214,7 @@ int member_exec( struct ast_channel* chan, const char* data )
 		return -1 ;
 	}
 
-	if ( ast_set_write_format_by_id( chan, member->write_format ) < 0 ) // AST_FORMAT_SLINEAR, chan->nativeformats
+	if ( ast_set_write_format_by_id( chan, member->read_format ) < 0 )
 	{
 		ast_log( LOG_ERROR, "unable to set write format to signed linear\n" ) ;
 		delete_member( member ) ;

@@ -1,5 +1,5 @@
 
-// $Id: cli.c,v 1.1 2016/05/26 08:45:43 borja.sixto Exp $
+// $Id: cli.c,v 1.2 2016/05/31 09:27:54 borja.sixto Exp $
 
 /*
  * app_conference
@@ -29,8 +29,10 @@
  */
 
 #include "asterisk/autoconfig.h"
+
 #include "cli.h"
 #include "conference.h"
+
 
 #ifdef AST_CLI_DEFINE
 
@@ -1899,7 +1901,7 @@ static struct ast_cli_entry app_vonference_commands[] = {
 };
 #endif
 
-void register_conference_cli( void )
+void register_conference_cli(struct ast_module_info *ast_module_info )
 {
 #ifdef AST_CLI_DEFINE
 	ast_cli_register_multiple(app_vonference_commands, sizeof(app_vonference_commands)/sizeof(struct ast_cli_entry));
@@ -1956,8 +1958,7 @@ void register_conference_cli( void )
 #endif
 #endif
 #ifdef	MANAGER_COMMANDS
-	//ast_manager_register( "VonferenceList", EVENT_FLAG_CALL, manager_conference_list, "Conference List" );
-  //ast_manager_register2("VonferenceList", 0, manager_conference_list, ast_module_info->self, "Conference List", NULL);
+	ast_manager_register( "VonferenceList", 0, manager_conference_list, "Conference List" );
 	ast_manager_register( "VonferenceEnd", EVENT_FLAG_CALL, manager_conference_end, "Terminate a conference" );
 #endif
 }

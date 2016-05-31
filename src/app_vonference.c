@@ -115,11 +115,10 @@ static int load_module( void )
 
 	init_conference() ;
 
-	register_conference_cli() ;
-
-
 	res |= ast_register_application( app, app_vonference_main, synopsis, descrip ) ;
 	res |= ast_register_application( app2, app_vonferencecount_main, synopsis2, descrip2 ) ;
+
+	register_conference_cli(ast_module_info) ;
 
 	return res ;
 }
@@ -131,4 +130,3 @@ static int load_module( void )
 AST_MODULE_INFO_STANDARD(ASTERISK_GPL_KEY,
 		"Channel Independent Video Conference Application");
 #undef AST_MODULE
-

@@ -1,5 +1,5 @@
 
-// $Id: cli.h,v 1.1 2016/05/26 08:45:43 borja.sixto Exp $
+// $Id: cli.h,v 1.2 2016/05/31 09:27:54 borja.sixto Exp $
 
 /*
  * app_conference
@@ -179,7 +179,7 @@ char *conference_drivechannel(struct ast_cli_entry *, int, struct ast_cli_args *
 
 #endif
 
-void register_conference_cli( void ) ;
+void register_conference_cli( struct ast_module_info *ast_module_info ) ;
 void unregister_conference_cli( void ) ;
 
 

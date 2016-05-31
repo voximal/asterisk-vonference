@@ -225,3 +225,5 @@ core
 **/CVS/*
 .cvsignore
 */.cvsignore
+*.so
+*.so
