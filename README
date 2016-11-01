@@ -2,7 +2,7 @@ Introduction
 
 App_vonference is a channel-independent video conference application.
 It features efficient audio mixing algorithms as well as video selection
-support based on VAD, DTMF or CLI. 
+support based on VAD, DTMF or CLI (it is a fork of the Konference project).
 
 
 Design goals
@@ -44,14 +44,14 @@ Video features
 
 License
 
-Naturally, app_vonference is GPL. The SVN repository also includes parts of
+Naturally, app_vonference is GPL. The GIT repository also includes parts of
 libspeex, which is distributed under a BSD-style license. See LICENSE for more
 details.
 
 
 Getting app_vonference
 
-app_konference is available via SVN from its own home on sourceforge:
+app_vonference is available via GIT from github:
 
     * https://github.com/voximal/asteisk-vonference
 
